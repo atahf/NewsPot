@@ -3,15 +3,18 @@ from flask_sqlalchemy import SQLAlchemy
 from os import path
 from flask_login import LoginManager
 from flask_recaptcha import ReCaptcha
+from apscheduler.schedulers.background import BackgroundScheduler
 import logging
 from dotenv import load_dotenv
 import os
+from datetime import datetime
 
 load_dotenv()
 
 db = SQLAlchemy()
 DB_NAME = "database.db"
 recaptcha = ReCaptcha()
+scheduler = BackgroundScheduler()
 
 def creat_app():
     app = Flask(__name__)
@@ -29,10 +32,40 @@ def creat_app():
     app.register_blueprint(auth, url_prefix='/')
 
     from .models import User, News, Comment
+    from .news import get_news
+
+    def parse_date(date_str):
+        try:
+            formats = [
+                '%a, %d %b %Y %H:%M:%S %z',  # Format 1: "Fri, 08 Dec 2023 13:52:54 +0000"
+                '%a, %d %b %Y %H:%M:%S %Z'   # Format 2: "Sun, 10 Dec 2023 08:55:50 GMT"
+            ]
+            for fmt in formats:
+                try:
+                    return datetime.strptime(date_str, fmt)
+                except ValueError:
+                    pass
+            raise ValueError("Date string does not match expected formats.")
+        except Exception as e:
+            print("Error: ", e)
+            return None
+
+    def fill_news():
+        news, renewed = get_news(h=0, m=59, s=0)
+        if renewed or len(News.query.all()) == 0:
+            News.query.delete()
+            Comment.query.delete()
+            for n in news["data"]:
+                new_n = News(title=n["title"], link=n["link"], content=n["content"], published=parse_date(n["published"]))
+                db.session.add(new_n)
+                db.session.commit()
+    scheduler.add_job(func=fill_news, trigger='cron', hour='*', minute='0', second='0')
     
     with app.app_context():
         db.create_all()
         print("Created Databse!")
+        fill_news()
+        scheduler.start()
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
