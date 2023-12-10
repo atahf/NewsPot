@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app
-from .models import User
+from .models import User, UserRole
 from . import db, recaptcha
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
@@ -64,8 +64,7 @@ def sign_up():
             flash("Captcha failed!", category='error')
         else:
             new_user = User(
-                email=email, 
-                isAdmin=False,
+                email=email,
                 first_name=firstName, 
                 last_name=lastName, 
                 password=generate_password_hash(password1, method="pbkdf2:sha256", salt_length=8)
@@ -77,3 +76,64 @@ def sign_up():
             return redirect(url_for('views.home'))
 
     return render_template("sign_up.html", user=current_user)
+
+@auth.route('/admin/add-user', methods=['POST'])
+@login_required
+def admin_add_user():
+    if current_user.role.isAdmin():
+        email = request.form.get('email')
+        firstName = request.form.get('firstName')
+        lastName = request.form.get('lastName')
+        password1 = request.form.get('password1')
+        password2 = request.form.get('password2')
+        userRole = UserRole.ADMIN if request.form.get('isAdmin') else UserRole.USER
+
+        user = User.query.filter_by(email=email).first()
+        recaptcha_response = request.form.get('g-recaptcha-response')
+
+        if user:
+            flash("Email in use!", category='error')
+        elif len(email) < 4:
+            flash("Email is short!", category='error')
+        elif len(firstName) < 2:
+            flash("First name is short!", category='error')
+        elif len(lastName) < 2:
+            flash("Last name is short!", category='error')
+        elif password1 != password2:
+            flash("passwords are not same!", category='error')
+        elif len(password1) < 7:
+            flash("password is short!", category='error')
+        elif not recaptcha_response or not recaptcha.verify(recaptcha_response):
+            flash("Captcha failed!", category='error')
+        else:
+            new_user = User(
+                email=email,
+                first_name=firstName, 
+                last_name=lastName, 
+                password=generate_password_hash(password1, method="pbkdf2:sha256", salt_length=8),
+                role=userRole
+            )
+            db.session.add(new_user)
+            db.session.commit()
+            flash("Account Created!", category='success')
+            return redirect(url_for('views.users'))
+    else:
+        return redirect(url_for("views.home"))
+
+@auth.route('/admin/remove-user/<int:id>', methods=['GET', 'POST'])
+@login_required
+def admin_remove_user(id):
+    if current_user.role.isAdmin():
+        user = User.query.get(int(id))
+        if user:
+            if user.id == current_user.id:
+                flash("Cannot Remove Yourself!", category="error")
+            else:
+                db.session.delete(user)
+                db.session.commit()
+                flash("Removed User!", category="success")
+        else:
+            flash("User does not Exist!", category="error")
+        return redirect(url_for("views.users"))
+    else:
+        return redirect(url_for("views.home"))

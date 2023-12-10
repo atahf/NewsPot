@@ -12,9 +12,17 @@
 <ul class="list-group list-group-flush" id="news">
     {% for c in news.comments %}
         <li class="list-group-item">
-            <b>{{ c.date }}</b>
-            <br>
-            <p>{{ c.content }}</p>
+            <div class="media">
+                <div class="media-body">
+                    <h4 class="media-heading">{{ c.getUser() }}&nbsp;<small><i>Posted on {{ c.date }}</i></small></h4>
+                    {% if user.role.isAdmin() %}
+                        <a style="text-decoration: none; color: #000000;" class="close" href="{{ url_for('views.delete_comment', comment_id=c.id, news_id=news.id) }}">
+                            <span aria-hidden="true">&times;</span>
+                        </a>
+                    {% endif %}
+                    <p>{{ c.content }}</p>
+                </div>
+            </div>
         </li>
     {% endfor %}
 </ul>
