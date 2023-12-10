@@ -26,7 +26,7 @@ def parse_date(date_str):
 @views.before_app_request
 def fill_news():
     from .models import News
-    news, renewed = get_news(h=0, m=30, s=0)
+    news, renewed = get_news(h=0, m=5, s=0)
     if renewed or len(News.query.all()) == 0:
         News.query.delete()
         Comment.query.delete()
