@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}News Page{% endblock %}
+
+{% block content %}
+<h1 align=""center> {{ news.title }} </h1>
+<i>{{ news.published }}</i>
+<p>{{ news.content }}</p>
+<h2>Comments</h2>
+<ul class="list-group list-group-flush" id="news">
+    {% for c in news.comments %}
+        <li class="list-group-item">
+            <b>{{ c.date }}</b>
+            <br>
+            <p>{{ c.content }}</p>
+        </li>
+    {% endfor %}
+</ul>
+<form method="POST">
+    <textarea name="comment" id="comment" class="form-control"></textarea>
+    <br />
+    <div align="center">
+        <button type="submit" class="btn btn-primary">Add Comment</button>
+    </div>
+</form>
+{% endblock %}

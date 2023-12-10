@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h1 align=""center>Latest News</h1>
+<ul class="list-group list-group-flush" id="news">
+    {% for n in news %}
+        <li class="list-group-item">
+            <a style="text-decoration: none; color: #000000" href="{{ url_for('views.news_page', id=n.id) }}">
+                <b>{{ n.title }}</b>
+                &nbsp;
+                <i>{{ n.published }}</i>
+            </a>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}
