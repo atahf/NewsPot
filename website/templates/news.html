@@ -5,6 +5,8 @@
 {% block content %}
 <h1 align=""center> {{ news.title }} </h1>
 <i>{{ news.published }}</i>
+<br>
+<a  href="{{ url_for('views.redirect_user', url=news.link) }}">go to news sourse</a>
 <p>{{ news.content }}</p>
 <h2>Comments</h2>
 <ul class="list-group list-group-flush" id="news">

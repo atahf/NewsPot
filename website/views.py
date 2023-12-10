@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash
+from flask import Blueprint, render_template, request, flash, redirect
 from flask_login import login_required, current_user
 from . import db
 from .models import *
@@ -56,3 +56,8 @@ def news_page(id):
             flash('Comment added!', category='success')
     
     return render_template("news.html", user=current_user, news=News.query.get(int(id)))
+
+@views.route('/redirect')
+def redirect_user():
+    url = request.args.get('url')
+    return redirect(url) if url else 'No URL provided.'
