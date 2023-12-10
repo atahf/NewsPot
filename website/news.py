@@ -3,6 +3,7 @@ import requests
 import json
 import os
 from datetime import datetime, timedelta
+from bs4 import BeautifulSoup
 
 rss_urls = (
     "https://www.ukrinform.net/rss/block-lastnews",         # ['id', 'guidislink', 'title', 'title_detail', 'links', 'link', 'summary', 'summary_detail', 'published', 'published_parsed', 'tags']
@@ -10,6 +11,7 @@ rss_urls = (
     "https://www.independent.co.uk/topic/ukraine/rss",      # ['title', 'title_detail', 'links', 'link', 'summary', 'summary_detail', 'published', 'published_parsed', 'id', 'guidislink', 'media_content', 'media_credit', 'credit', 'media_text', 'authors', 'author', 'author_detail', 'updated', 'updated_parsed', 'tags']
     "https://en.interfax.com.ua/news/last.rss",             # ['title', 'title_detail', 'links', 'link', 'summary', 'summary_detail', 'published', 'published_parsed', 'id', 'guidislink', 'tags']
     "https://unn.ua/rss/news_uk.xml",                       # ['title', 'title_detail', 'summary', 'summary_detail', 'links', 'link', 'id', 'guidislink', 'tags', 'published', 'published_parsed']
+    "https://zn.ua/rss/full.rss",                           # ['title', 'title_detail', 'links', 'link', 'published', 'published_parsed', 'tags', 'summary', 'summary_detail', 'content']
 )
 
 def crawl_news():
@@ -22,14 +24,119 @@ def crawl_news():
     for rss_url in rss_urls:
         rss_feed = feedparser.parse(rss_url)
         for entry in rss_feed.entries:
-            crawled_news["result"] += 1
-            crawled_news["data"].append({
-                "id": crawled_news["result"],
-                "title": entry.get("title", ""),
-                "link": entry.get("link", ""),
-                "summary": entry.get("summary", ""),
-                "published": entry.get("published", ""),
-            })
+            try:
+                if rss_url == rss_urls[0] and entry.link:
+                    response = requests.get(entry.link)
+                    if response.status_code == 200:
+                        soup = BeautifulSoup(response.text, "html.parser")
+                        container = soup.find("div", class_="newsText")
+                        divs = container.find_all("div", recursive=False)
+                        article = divs[1]
+                        for child in article.find_all(recursive=False):
+                            if child.name != 'p':
+                                child.extract()
+                        p_tags = article.find_all("p")
+                        text = " ".join(t.get_text() for t in p_tags if len(t.get_text()) > 0 and t.get_text() != "Read also:")
+                        crawled_news["result"] += 1
+                        crawled_news["data"].append({
+                            "id": crawled_news["result"],
+                            "title": entry.get("title", ""),
+                            "link": entry.get("link", ""),
+                            "content": text,
+                            "published": entry.get("published", ""),
+                        })
+                elif rss_url == rss_urls[1] and entry.link:
+                    response = requests.get(entry.link)
+                    if response.status_code == 200:
+                        soup = BeautifulSoup(response.text, "html.parser")
+                        article = soup.find("div", class_="entry-content")
+                        for child in article.find_all(recursive=False):
+                            if child.name != 'p':
+                                child.extract()
+                        p_tags = article.find_all("p")
+                        text = " ".join(t.get_text() for t in p_tags if len(t.get_text()) > 0 and t.get_text() != "Read also:")
+                        crawled_news["result"] += 1
+                        crawled_news["data"].append({
+                            "id": crawled_news["result"],
+                            "title": entry.get("title", ""),
+                            "link": entry.get("link", ""),
+                            "content": text,
+                            "published": entry.get("published", ""),
+                        })
+                elif rss_url == rss_urls[2] and entry.link and "https://www.independent.co.uk/tv/" not in entry.link:
+                    response = requests.get(entry.link)
+                    if response.status_code == 200:
+                        soup = BeautifulSoup(response.text, "html.parser")
+                        article = soup.find("div", id="main")
+                        for child in article.find_all(recursive=False):
+                            if child.name != 'p':
+                                child.extract()
+                        p_tags = article.find_all("p")
+                        text = " ".join(t.get_text() for t in p_tags if len(t.get_text()) > 0)
+                        crawled_news["result"] += 1
+                        crawled_news["data"].append({
+                            "id": crawled_news["result"],
+                            "title": entry.get("title", ""),
+                            "link": entry.get("link", ""),
+                            "content": text,
+                            "published": entry.get("published", ""),
+                        })
+                elif rss_url == rss_urls[3] and entry.link:
+                    response = requests.get(entry.link)
+                    if response.status_code == 200:
+                        soup = BeautifulSoup(response.text, "html.parser")
+                        article = soup.find("div", class_="article-content")
+                        for child in article.find_all(recursive=False):
+                            if child.name != 'p':
+                                child.extract()
+                        p_tags = article.find_all("p")
+                        text = " ".join(t.get_text() for t in p_tags if len(t.get_text()) > 0)
+                        crawled_news["result"] += 1
+                        crawled_news["data"].append({
+                            "id": crawled_news["result"],
+                            "title": entry.get("title", ""),
+                            "link": entry.get("link", ""),
+                            "content": text,
+                            "published": entry.get("published", ""),
+                        })
+                elif rss_url == rss_urls[4] and entry.link:
+                    response = requests.get(entry.link)
+                    if response.status_code == 200:
+                        soup = BeautifulSoup(response.text, "html.parser")
+                        article = soup.find("div", class_="single-news-card_body__xHoem")
+                        for child in article.find_all(recursive=False):
+                            if child.name != 'p':
+                                child.extract()
+                        p_tags = article.find_all("p")
+                        text = " ".join(t.get_text() for t in p_tags if len(t.get_text()) > 0)
+                        crawled_news["result"] += 1
+                        crawled_news["data"].append({
+                            "id": crawled_news["result"],
+                            "title": entry.get("title", ""),
+                            "link": entry.get("link", ""),
+                            "content": text,
+                            "published": entry.get("published", ""),
+                        })
+                elif rss_url == rss_urls[5] and entry.link:
+                    response = requests.get(entry.link)
+                    if response.status_code == 200:
+                        soup = BeautifulSoup(response.text, "html.parser")
+                        article = soup.find("div", class_="content-wrap-inside")
+                        for child in article.find_all(recursive=False):
+                            if child.name != 'p':
+                                child.extract()
+                        p_tags = article.find_all("p")
+                        text = " ".join(t.get_text() for t in p_tags if len(t.get_text()) > 0)
+                        crawled_news["result"] += 1
+                        crawled_news["data"].append({
+                            "id": crawled_news["result"],
+                            "title": entry.get("title", ""),
+                            "link": entry.get("link", ""),
+                            "content": text,
+                            "published": entry.get("published", ""),
+                        })
+            except Exception as e:
+                continue
 
     with open("news.json", 'w') as f:
         json.dump(crawled_news, f, ensure_ascii=False, indent=4)

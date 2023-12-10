@@ -32,14 +32,14 @@ def fill_news():
         Comment.query.delete()
         for n in news["data"]:
             d = parse_date(n["published"])
-            new_n = News(title=n["title"], link=n["link"], content=n["summary"], published=d)
+            new_n = News(title=n["title"], link=n["link"], content=n["content"], published=d)
             db.session.add(new_n)
             db.session.commit()
 
 @views.route('/')
 @login_required
 def home():
-    return render_template("home.html", user=current_user, news=News.query.all())
+    return render_template("home.html", user=current_user, news=News.query.order_by(News.published.desc()).all())
 
 @views.route('/news/<int:id>', methods=['GET', 'POST'])
 @login_required

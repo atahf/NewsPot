@@ -38,4 +38,4 @@ class User(db.Model, UserMixin):
     comments = db.relationship('Comment')
 
     def __str__(self):
-        return self.first_name + self.last_name
+        return f"{self.first_name[0].upper()}{'*' * (len(self.first_name)-1)} {self.last_name[0].upper()}{'*' * (len(self.last_name)-1)}"
