@@ -7,7 +7,7 @@
 <ul class="list-group list-group-flush" id="news">
     {% for n in news %}
         <li class="list-group-item">
-            <a style="text-decoration: none; color: #000000" href="{{ url_for('views.news_page', id=n.id) }}">
+            <a style="text-decoration: none; color: #000000" href="{{ url_for('views.news_page', news_id=n.id) }}">
                 <b>{{ n.title }}</b>
                 <br />
                 <i>{{ n.published }}</i>
