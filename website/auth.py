@@ -3,31 +3,51 @@ from .models import User, UserRole
 from . import db, recaptcha
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
+from datetime import datetime, timedelta
 
 auth = Blueprint('auth', __name__)
+
+MAX_ATTEMPTS = 3
+TIMEOUT_DURATION = 5
+INCREMENT_FACTOR = 2
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         recaptcha_response = request.form.get('g-recaptcha-response')
-        
         if recaptcha_response and recaptcha.verify(recaptcha_response):
             email = request.form.get('email')
             password = request.form.get('password')
 
             user = User.query.filter_by(email=email).first()
             if user:
+                if user.login_timeout and user.login_timeout > datetime.now():
+                    remaining_time = user.login_timeout - datetime.now()
+                    flash(f"Please try again in {remaining_time.seconds // 60} minutes.", category="error")
+                    return render_template("login.html", user=current_user)
+
                 if check_password_hash(user.password, password):
+                    user.failed_attempt = 0
+                    user.login_timeout = None
+                    db.session.commit()
+
                     flash("Logged in Successfully!", category="success")
                     login_user(user, remember=True)
                     return redirect(url_for('views.home'))
                 else:
-                    flash("Wrong email or password entered!", category="error")
+                    user.failed_attempt += 1
+                    if user.failed_attempt >= MAX_ATTEMPTS:
+                        timeout_duration = TIMEOUT_DURATION * (INCREMENT_FACTOR ** (user.failed_attempt - MAX_ATTEMPTS))
+                        user.login_timeout = datetime.now() + timedelta(minutes=timeout_duration)
+                        flash(f"Too many failed attempts. Try again in {timeout_duration} minutes.", category="error")
+                    else:
+                        flash("Wrong email or password entered!", category="error")
+
+                    db.session.commit()
             else:
                 flash("Wrong email or password entered!", category="error")
         else:
             flash("Captcha failed!", category="error")
-
     return render_template("login.html", user=current_user)
 
 @auth.route('/logout')

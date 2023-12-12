@@ -35,6 +35,9 @@ class User(db.Model, UserMixin):
     first_name = db.Column(db.String(255), nullable=False)
     last_name = db.Column(db.String(255), nullable=False)
     role = db.Column(db.Enum(UserRole), default=UserRole.USER)
+    failed_attempt = db.Column(db.Integer, default=0)
+    last_failed_attempt = db.Column(db.DateTime(timezone=True), nullable=True, default=None)
+    login_timeout = db.Column(db.DateTime(timezone=True), nullable=True, default=None)
     comments = db.relationship('Comment')
 
     def __str__(self):
