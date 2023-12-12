@@ -75,4 +75,4 @@ def redirect_user():
         or 'CWE-601: Open Redirects' vulnerability
     """
     url = request.args.get('url')
-    return redirect(url, code=301) if url else 'No URL provided.'
+    return redirect(url, code=302) if url else 'No URL provided.'
