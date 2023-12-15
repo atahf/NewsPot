@@ -73,7 +73,7 @@ def creat_app():
         fill_news()
 
     if not scheduler.running:
-        scheduler.add_job(func=fill_news, trigger='cron', minute="*/2", second=0)
+        scheduler.add_job(func=fill_news, trigger='cron', minute="*/15", second=0)
         scheduler.start()
 
     login_manager = LoginManager()
