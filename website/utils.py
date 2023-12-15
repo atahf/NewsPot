@@ -14,9 +14,11 @@ def send_mail(recipient, uuid, name, six_digit = "000000"):
     smtp_pass = os.getenv("PASSWORD")
     sender_email = os.getenv("EMAIL_ADDRESS")
     recipient_email = recipient
+
+    app_url = os.getenv("APP_URL")
     
     subject = "Password Recovery"
-    link = f"127.0.0.1:5000/passwordReset/{uuid}"
+    link = f"{app_url}/passwordReset/{uuid}"
     body = f"Hi {name}; \n\n\nBy clicking the link below you can reset your password.\n6 digit verification code: {six_digit}\n\n\n{link}"
         
     
