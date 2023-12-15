@@ -87,7 +87,7 @@ def sign_up():
                 email=email,
                 first_name=firstName, 
                 last_name=lastName, 
-                password=generate_password_hash(password1, method="pbkdf2:sha256", salt_length=8)
+                password=generate_password_hash(password1, method="pbkdf2:sha256", salt_length=16)
             )
             db.session.add(new_user)
             db.session.commit()
@@ -143,17 +143,22 @@ def admin_add_user():
 @auth.route('/admin/remove-user/<int:id>', methods=['GET', 'POST'])
 @login_required
 def admin_remove_user(id):
-    if current_user.role.isAdmin():
-        user = User.query.get(int(id))
-        if user:
-            if user.id == current_user.id:
-                flash("Cannot Remove Yourself!", category="error")
-            else:
-                db.session.delete(user)
-                db.session.commit()
-                flash("Removed User!", category="success")
-        else:
-            flash("User does not Exist!", category="error")
-        return redirect(url_for("views.users"))
-    else:
+    
+    if not current_user.role.isAdmin():
         return redirect(url_for("views.home"))
+    
+    user = User.query.get(int(id))
+    
+    if not user:
+        flash("User does not Exist!", category="error")
+        return redirect(url_for("views.users"))
+        
+    if user.id == current_user.id:
+        flash("Cannot Remove Yourself!", category="error")
+        return redirect(url_for("views.users"))
+    
+    db.session.delete(user)
+    db.session.commit()
+    flash("Removed User!", category="success")
+    return redirect(url_for("views.users"))
+    

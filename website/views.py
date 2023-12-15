@@ -1,8 +1,12 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
 from . import db
-from .models import User, News, Comment
+from .models import User, News, Comment, PasswordResetToken
+import uuid
+import random
+from .utils import send_mail
+from werkzeug.security import generate_password_hash
 
 views = Blueprint('views', __name__)
 
@@ -76,3 +80,103 @@ def redirect_user():
     """
     url = request.args.get('url')
     return redirect(url, code=302) if url else 'No URL provided.'
+
+
+@views.route("/passwordReset", methods=['GET', 'POST'])
+def password_reset():
+    
+    if request.method == "POST":
+        email = request.form.get("email")
+        user : User = db.session.query(User).filter(User.email == email).first()
+        
+        if not user:
+            flash("There is no such account!", category="error")
+            return redirect(url_for('auth.login'))
+        
+        instances = db.session.query(PasswordResetToken).filter(PasswordResetToken.user_id == user.id, PasswordResetToken.created_at > datetime.utcnow() - timedelta(hours=1) ).all()
+        if len(instances) > 0:
+            flash("Yo can only try to reset your password once a hour!", category="error")
+            return redirect(url_for('auth.login'))
+        
+        new_token = PasswordResetToken(user_id = user.id, uuid = str(uuid.uuid4()), is_confirmed = False, six_digit = str(random.randint(100000,999999)))
+        send_mail(recipient=user.email, uuid=new_token.uuid, name=user.first_name, six_digit=new_token.six_digit)
+        db.session.add(new_token)
+        db.session.commit()
+        
+        flash("Instructions are sent to your email!", category="info")
+        return redirect(url_for('auth.login'))
+    
+    else:
+        return render_template("password_reset.html", user=current_user)
+    
+    
+@views.route("passwordReset/<string:uuid>", methods=["GET", "POST"])
+def password_reset_confirm(uuid):
+    instance : PasswordResetToken = db.session.query(PasswordResetToken).filter(PasswordResetToken.uuid == str(uuid)).first()
+    if request.method == "POST":
+        url = request.args.get('url')
+        
+        if not instance:
+            flash("Token could not be found!", category="error")
+            return redirect(url_for('auth.login'))
+        
+        if instance.is_confirmed:
+            flash("This token already issued!", category="error")
+            return redirect(url_for('auth.login'))
+        
+        if instance.expiry_date < datetime.utcnow():
+            flash("This token is expired!", category="error")
+            return redirect(url_for('auth.login'))
+        
+        if instance.remaining_rights <= 0:
+            flash("No rights left!", category="error")
+            return redirect(url_for('auth.login'))
+        
+        user = instance.getUser()
+        if not user:
+            flash("The user could not be found!")
+            return redirect(url_for('auth.login'))
+            
+        if instance.six_digit != request.form.get("six_digit"):
+            instance.remaining_rights -= 1
+            db.session.commit()
+            flash("The 6 digit code is incorrect", category="error")
+            return redirect(url)
+        
+        if str(request.form.get("new_password")) != str(request.form.get("new_password_again")):
+            flash("The passwords are not matching!", category="error")
+            return redirect(url)
+            
+        instance.is_confirmed = True
+        user.password = generate_password_hash(str(request.form.get("new_password")), method="pbkdf2:sha256", salt_length=16)
+        db.session.commit()
+        flash("Password change succeed!", category="info")
+        return redirect(url_for('auth.login'))
+    
+    else:
+        
+        if not instance:
+            flash("Token could not be found!", category="error")
+            return redirect(url_for('auth.login'))
+        
+        if instance.is_confirmed:
+            flash("This token already issued!", category="error")
+            return redirect(url_for('auth.login'))
+        
+        if instance.expiry_date < datetime.utcnow():
+            flash("This token is expired!", category="error")
+            return redirect(url_for('auth.login'))
+        
+        if instance.remaining_rights <= 0:
+            flash("No rights left!", category="error")
+            return redirect(url_for('auth.login'))
+        
+        user = instance.getUser()
+        if not user:
+            flash("The user could not be found!")
+            return redirect(url_for('auth.login'))
+        
+        return render_template("password_reset_confirm.html", user=current_user)
+            
+        
+        

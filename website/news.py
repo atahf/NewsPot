@@ -138,12 +138,12 @@ def crawl_news():
             except Exception as e:
                 continue
 
-    with open("news.json", 'w') as f:
+    with open("news.json", 'w', encoding="utf-8") as f:
         json.dump(crawled_news, f, ensure_ascii=False, indent=4)
 
 def get_news(h=0, m=0, s=0, recursive=False):
     if os.path.exists("news.json"):
-        with open("news.json", 'r') as f:
+        with open("news.json", 'r', encoding="utf-8") as f:
             res = json.load(f)
         if res:
             update_interval = timedelta(hours=h, minutes=m, seconds=s)

@@ -52,7 +52,7 @@ def creat_app():
 
     def fill_news():
         news, renewed = get_news(h=0, m=59, s=0)
-        if renewed or len(News.query.all()) == 0:
+        if renewed or len(db.session.query(News).all()) == 0:
             News.query.delete()
             Comment.query.delete()
             for n in news["data"]:
