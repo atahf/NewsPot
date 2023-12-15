@@ -33,6 +33,8 @@
 						<a class="nav-item nav-link" id="home" href="/">Home</a>
 						{% if user.role.isAdmin() %}
 							<a class="nav-item nav-link" id="users" href="/users">Users</a>
+							<a class="nav-item nav-link" id="users" href="/add-user">Add User</a>
+							<a class="nav-item nav-link" id="comments" href="/comments">Comments</a>
 						{% endif %}
 					{% endif %}
 				</div>

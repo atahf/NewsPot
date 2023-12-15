@@ -4,26 +4,26 @@
 
 {% block content %}
 <div class="container-fluid">
-    <ul class="list-group" id="users">
+    <ul class="list-group" id="comments">
         <li class="list-group-item active">
-            <h2>Users</h2>
+            <h2>Comments</h2>
         </li>
-        {% for u in users %}
+        {% for c in comments %}
             <li class="list-group-item">
                 <div class="media" style="display: flex; align-items: center;">
                     <div class="media-body">
                         <p>
-                            User ID: {{ u.id }}
+                            News ID: <a style="text-decoration: none;" href="/news/{{ c.news_id }}">{{ c.news_id }}</a>
                             <br />
-                            Email: {{ u.email }}
+                            User ID: {{ c.user_id }}
                             <br />
-                            User Name: {{ u.first_name }} {{ u.last_name }}
+                            Date: {{ c.date }}
                             <br />
-                            User Role: {{ u.role.value }}
+                            Content: {{ c.content }}
                         </p>
                     </div>
                     <div class="media-right">
-                        <a type="button" class="btn btn-danger" href="{{ url_for('auth.admin_remove_user', id=u.id) }}">remove</a>
+                        <a type="button" class="btn btn-danger" href="{{ url_for('views.delete_comment', comment_id=c.id, news_id=c.news_id) }}">remove</a>
                     </div>
                 </div>
             </li>

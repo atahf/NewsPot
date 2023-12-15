@@ -50,8 +50,7 @@ def news_page(news_id):
 @login_required
 def delete_comment(news_id, comment_id):
     """
-        this endpoint tries to delete a comment with given commend_id and reopens 
-        the page of specific news with news_id
+        this endpoint tries to delete a comment with given commend_id
     """
     if current_user.role.isAdmin():
         comment = Comment.query.get(int(comment_id))
@@ -63,7 +62,7 @@ def delete_comment(news_id, comment_id):
             flash("Comment Does not exists!", category="success")
     else:
         flash("Not Authorized to remove!")
-    return redirect(url_for("views.news_page", news_id=int(news_id)))
+    return redirect(url_for("views.comments"))
 
 @views.route('/users')
 @login_required
@@ -74,6 +73,20 @@ def users():
     """
     if current_user.role.isAdmin():
         return render_template("users.html", user=current_user, users=User.query.all())
+    return redirect(url_for('views.home'))
+
+@views.route('/add-user')
+@login_required
+def add_user():
+    if current_user.role.isAdmin():
+        return render_template("add_user.html", user=current_user, users=User.query.all())
+    return redirect(url_for('views.home'))
+
+@views.route('/comments')
+@login_required
+def comments():
+    if current_user.role.isAdmin():
+        return render_template("comments.html", user=current_user, comments=Comment.query.all())
     return redirect(url_for('views.home'))
 
 @views.route('/redirect')
