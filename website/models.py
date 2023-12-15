@@ -21,6 +21,7 @@ class News(db.Model):
     title = db.Column(db.String(4095), nullable=False)
     content = db.Column(db.String(131071), nullable=False)
     published = db.Column(db.DateTime(timezone=True), default=func.now())
+    image_url = db.Column(db.String(1023), nullable=True)
     comments = db.relationship('Comment')
 
 class Comment(db.Model):

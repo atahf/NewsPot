@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from os import path
 from flask_login import LoginManager
 from flask_recaptcha import ReCaptcha
-from apscheduler.schedulers.background import BackgroundScheduler
+#from apscheduler.schedulers.background import BackgroundScheduler
 import logging
 from dotenv import load_dotenv
 import os
@@ -14,7 +14,7 @@ load_dotenv()
 db = SQLAlchemy()
 DB_NAME = "database.db"
 recaptcha = ReCaptcha()
-scheduler = BackgroundScheduler()
+#scheduler = BackgroundScheduler()
 
 def creat_app():
     app = Flask(__name__)
@@ -56,16 +56,17 @@ def creat_app():
             News.query.delete()
             Comment.query.delete()
             for n in news["data"]:
-                new_n = News(title=n["title"], link=n["link"], content=n["content"], published=parse_date(n["published"]))
+                img = n["images"][0] if len(n["images"]) > 0 else None
+                new_n = News(title=n["title"], link=n["link"], content=n["content"], published=parse_date(n["published"]), image_url=img)
                 db.session.add(new_n)
                 db.session.commit()
-    scheduler.add_job(func=fill_news, trigger='cron', hour='*', minute='0', second='0')
+    #scheduler.add_job(func=fill_news, trigger='cron', hour='*', minute='0', second='0')
     
     with app.app_context():
         db.create_all()
         print("Created Databse!")
         fill_news()
-        scheduler.start()
+        #scheduler.start()
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'

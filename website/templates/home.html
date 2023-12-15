@@ -3,14 +3,31 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<h1 align=""center>Latest News</h1>
+<h1 style="display: flex; justify-content: center; align-items: center; margin: auto; padding-bottom: 15px;">Latest News</h1>
 <ul class="list-group list-group-flush" id="news">
     {% for n in news %}
         <li class="list-group-item">
-            <a style="text-decoration: none; color: #000000" href="{{ url_for('views.news_page', news_id=n.id) }}">
-                <b>{{ n.title }}</b>
-                <br />
-                <i>{{ n.published }}</i>
+            <a style="text-align: justify; text-justify: inter-word; text-decoration: none; color: #000000" href="{{ url_for('views.news_page', news_id=n.id) }}">
+                <div class="media">
+                    {% if n.image_url %}
+                        <div class="media-left">
+                            <img src={{ n.image_url }} alt="news-img-{{ n.id }}" class="media-object" style="width: 450px; height: 275px; margin-right: 20px;">
+                        </div>
+                    {% else %}
+                    <div class="media-left">
+                        <img src="https://img.freepik.com/premium-vector/mobile-phone-with-ukrainian-flag-screen-hands-phrase-stop-war-smartphone-flat-vector-illustration-person-getting-latest-news-internet-freedom-peace-gadget-concept_74855-24927.jpg?w=1380" alt="news-img-{{ n.id }}" class="media-object" style="width: 450px; height: 275px; margin-right: 20px;">
+                    </div>
+                    {% endif %}
+                    <div class="media-body" style="display: flex; justify-content: center; align-items: center; margin: auto;">
+                        <h4 style="margin-left: 20px;">
+                            {{ n.title }}
+                            <br />
+                            <small>
+                                <i>{{ n.published }}</i>
+                            </small>
+                        </h4>
+                    </div>
+                </div>
             </a>
         </li>
     {% endfor %}

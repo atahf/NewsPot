@@ -59,7 +59,7 @@ def delete_comment(news_id, comment_id):
             flash("Comment Does not exists!", category="success")
     else:
         flash("Not Authorized to remove!")
-    return redirect(url_for("views.news_page", id=int(news_id)))
+    return redirect(url_for("views.news_page", news_id=int(news_id)))
 
 @views.route('/users')
 @login_required

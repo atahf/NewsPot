@@ -25,6 +25,10 @@ def crawl_news():
         rss_feed = feedparser.parse(rss_url)
         for entry in rss_feed.entries:
             try:
+                imgs = []
+                for elem in entry.links:
+                    if "image" in elem.type:
+                        imgs.append(elem.href)
                 if rss_url == rss_urls[0] and entry.link:
                     response = requests.get(entry.link)
                     if response.status_code == 200:
@@ -44,6 +48,7 @@ def crawl_news():
                             "link": entry.get("link", ""),
                             "content": text,
                             "published": entry.get("published", ""),
+                            "images": imgs
                         })
                 elif rss_url == rss_urls[1] and entry.link:
                     response = requests.get(entry.link)
@@ -62,6 +67,7 @@ def crawl_news():
                             "link": entry.get("link", ""),
                             "content": text,
                             "published": entry.get("published", ""),
+                            "images": imgs
                         })
                 elif rss_url == rss_urls[2] and entry.link and "https://www.independent.co.uk/tv/" not in entry.link:
                     response = requests.get(entry.link)
@@ -80,6 +86,7 @@ def crawl_news():
                             "link": entry.get("link", ""),
                             "content": text,
                             "published": entry.get("published", ""),
+                            "images": imgs
                         })
                 elif rss_url == rss_urls[3] and entry.link:
                     response = requests.get(entry.link)
@@ -98,6 +105,7 @@ def crawl_news():
                             "link": entry.get("link", ""),
                             "content": text,
                             "published": entry.get("published", ""),
+                            "images": imgs
                         })
                 elif rss_url == rss_urls[4] and entry.link:
                     response = requests.get(entry.link)
@@ -116,6 +124,7 @@ def crawl_news():
                             "link": entry.get("link", ""),
                             "content": text,
                             "published": entry.get("published", ""),
+                            "images": imgs
                         })
                 elif rss_url == rss_urls[5] and entry.link:
                     response = requests.get(entry.link)
@@ -134,6 +143,7 @@ def crawl_news():
                             "link": entry.get("link", ""),
                             "content": text,
                             "published": entry.get("published", ""),
+                            "images": imgs
                         })
             except Exception as e:
                 continue

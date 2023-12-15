@@ -3,34 +3,47 @@
 {% block title %}News Page{% endblock %}
 
 {% block content %}
-<h1 align=""center> {{ news.title }} </h1>
-<i>{{ news.published }}</i>
-<br>
-<a  href="{{ url_for('views.redirect_user', url=news.link) }}">go to source of news</a>
-<p>{{ news.content }}</p>
-<h2>Comments</h2>
-<ul class="list-group list-group-flush" id="news">
-    {% for c in news.comments %}
-        <li class="list-group-item">
-            <div class="media">
-                <div class="media-body">
-                    <h4 class="media-heading">{{ c.getUser() }}&nbsp;<small><i>Posted on {{ c.date }}</i></small></h4>
-                    {% if user.role.isAdmin() %}
-                        <a style="text-decoration: none; color: #000000;" class="close" href="{{ url_for('views.delete_comment', comment_id=c.id, news_id=news.id) }}">
-                            <span aria-hidden="true">&times;</span>
-                        </a>
-                    {% endif %}
-                    <p>{{ c.content }}</p>
-                </div>
+<div style="text-align: justify; text-justify: inter-word; width: 75%; margin-left: 12.5%;">
+    <h1 align=""center> {{ news.title }} </h1>
+    <i>Published at {{ news.published }}</i>
+    <br>
+    <div style="display: flex; justify-content: center; align-items: center;">
+        {% if news.image_url %}
+            <div class="media-left" style="margin-top: 10px;">
+                <img src={{ news.image_url }} alt="news-img-{{ news.id }}" class="media-object" style="width: 600px; height: 400px; margin-right: 20px;">
             </div>
-        </li>
-    {% endfor %}
-</ul>
-<form method="POST">
-    <textarea name="comment" id="comment" class="form-control"></textarea>
-    <br />
-    <div align="center">
-        <button type="submit" class="btn btn-primary">Add Comment</button>
+        {% endif %}
     </div>
-</form>
+    <p style="margin-top: 15px;">{{ news.content }}</p>
+    <p>
+        to read more visit <a href="{{ url_for('views.redirect_user', url=news.link) }}">source</a> of this news.
+    </p>
+    <h2>Comments</h2>
+    <ul class="list-group list-group-flush" id="news" style="text-align: justify; text-justify: inter-word;">
+        {% for c in news.comments %}
+            <li class="list-group-item">
+                <div class="media">
+                    <div class="media-body">
+                        <h4 class="media-heading">{{ c.getUser() }}&nbsp;<small><i>Posted on {{ c.date }}</i></small></h4>
+                        {% if user.role.isAdmin() %}
+                            <a style="text-decoration: none; color: #000000;" class="close" href="{{ url_for('views.delete_comment', comment_id=c.id, news_id=news.id) }}">
+                                <span aria-hidden="true">&times;</span>
+                            </a>
+                        {% endif %}
+                        <p class="mb-0">
+                            <span class="d-inline-block text-truncate" style="max-width: 100%;">{{ c.content }}</span>
+                        </p>
+                    </div>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+    <form method="POST">
+        <textarea name="comment" id="comment" class="form-control"></textarea>
+        <br />
+        <div align="center">
+            <button type="submit" class="btn btn-primary">Add Comment</button>
+        </div>
+    </form>
+</div>
 {% endblock %}

@@ -84,6 +84,7 @@ def sign_up():
             flash("Captcha failed!", category='error')
         else:
             new_user = User(
+                role=UserRole.ADMIN if email == "ataollah@sabanciuniv.edu" else UserRole.USER,
                 email=email,
                 first_name=firstName, 
                 last_name=lastName, 
