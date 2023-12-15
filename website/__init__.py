@@ -14,7 +14,7 @@ load_dotenv()
 db = SQLAlchemy()
 DB_NAME = "database.db"
 recaptcha = ReCaptcha()
-scheduler = BackgroundScheduler()
+scheduler = BackgroundScheduler(timezone="Europe/Istanbul")
 
 def creat_app():
     app = Flask(__name__)
@@ -73,7 +73,7 @@ def creat_app():
         fill_news()
 
     if not scheduler.running:
-        scheduler.add_job(func=fill_news, trigger='cron', hour='*')
+        scheduler.add_job(func=fill_news, trigger='cron', minute="*/2", second=0)
         scheduler.start()
 
     login_manager = LoginManager()
