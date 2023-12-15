@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from os import path
 from flask_login import LoginManager
 from flask_recaptcha import ReCaptcha
-#from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.background import BackgroundScheduler
 import logging
 from dotenv import load_dotenv
 import os
@@ -14,7 +14,7 @@ load_dotenv()
 db = SQLAlchemy()
 DB_NAME = "database.db"
 recaptcha = ReCaptcha()
-#scheduler = BackgroundScheduler()
+scheduler = BackgroundScheduler()
 
 def creat_app():
     app = Flask(__name__)
@@ -24,6 +24,10 @@ def creat_app():
     app.config['RECAPTCHA_SECRET_KEY'] = os.environ['RECAPTCHA_SECRET_KEY']
 
     db.init_app(app)
+
+    logging.basicConfig(filename='newspot.log', level=logging.INFO)
+    logging.getLogger('werkzeug').setLevel(logging.ERROR)
+    logger = logging.getLogger(__name__)
 
     from .views import views
     from .auth import auth
@@ -51,22 +55,26 @@ def creat_app():
             return None
 
     def fill_news():
-        news, renewed = get_news(h=0, m=59, s=0)
-        if renewed or len(db.session.query(News).all()) == 0:
-            News.query.delete()
-            Comment.query.delete()
-            for n in news["data"]:
-                img = n["images"][0] if len(n["images"]) > 0 else None
-                new_n = News(title=n["title"], link=n["link"], content=n["content"], published=parse_date(n["published"]), image_url=img)
-                db.session.add(new_n)
-                db.session.commit()
-    #scheduler.add_job(func=fill_news, trigger='cron', hour='*', minute='0', second='0')
+        with app.app_context():
+            logger.info(f"'fill_news()' running at {datetime.now()}!")
+            news, renewed = get_news(h=1, m=0, s=0)
+            if renewed or len(db.session.query(News).all()) == 0:
+                News.query.delete()
+                Comment.query.delete()
+                for n in news["data"]:
+                    img = n["images"][0] if len(n["images"]) > 0 else None
+                    new_n = News(title=n["title"], link=n["link"], content=n["content"], published=parse_date(n["published"]), image_url=img)
+                    db.session.add(new_n)
+                    db.session.commit()
     
     with app.app_context():
         db.create_all()
         print("Created Databse!")
         fill_news()
-        #scheduler.start()
+
+    if not scheduler.running:
+        scheduler.add_job(func=fill_news, trigger='cron', hour='*')
+        scheduler.start()
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
@@ -75,10 +83,6 @@ def creat_app():
     @login_manager.user_loader
     def load_user(id):
         return User.query.get(int(id))
-
-    logging.basicConfig(filename='newspot.log', level=logging.INFO)
-    logging.getLogger('werkzeug').setLevel(logging.ERROR)
-    logger = logging.getLogger(__name__)
 
     @app.after_request
     def after_request(response):
