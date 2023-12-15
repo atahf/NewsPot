@@ -85,9 +85,10 @@ def add_user():
 @views.route('/comments')
 @login_required
 def comments():
-    if current_user.role.isAdmin():
-        return render_template("comments.html", user=current_user, comments=Comment.query.all())
-    return redirect(url_for('views.home'))
+    """
+        this endpoint should have 'A8: Failure to Restrict URL Access'
+    """
+    return render_template("comments.html", user=current_user, comments=Comment.query.all())
 
 @views.route('/redirect')
 def redirect_user():
