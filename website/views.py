@@ -26,6 +26,10 @@ def news_page(news_id):
     """
         endpoint displays a specific news by news_id
     """
+    news = News.query.get(int(news_id))
+    if not news:
+        flash('Page not found!', category='error')
+        return redirect(url_for("views.home"))
     if request.method == 'POST':
         comment = request.form.get('comment')
         if len(comment) < 1:
@@ -40,7 +44,7 @@ def news_page(news_id):
             db.session.add(new_comment)
             db.session.commit()
             flash('Comment added!', category='success')
-    return render_template("news.html", user=current_user, news=News.query.get(int(news_id)))
+    return render_template("news.html", user=current_user, news=news)
 
 @views.route('/news/<int:news_id>/delete-comment/<int:comment_id>', methods=['GET', 'POST'])
 @login_required
