@@ -52,16 +52,14 @@ def delete_comment(news_id, comment_id):
     """
         this endpoint tries to delete a comment with given commend_id
     """
-    if current_user.role.isAdmin():
-        comment = Comment.query.get(int(comment_id))
-        if comment:
-            db.session.delete(comment)
-            db.session.commit()
-            flash("Comment Removed", category="success")
-        else:
-            flash("Comment Does not exists!", category="success")
-    else:
-        flash("Not Authorized to remove!")
+    comment = Comment.query.get(int(comment_id))
+    if not comment:
+        flash("Comment Does not exists!", category="success")
+        return redirect(url_for("views.comments"))
+    
+    db.session.delete(comment)
+    db.session.commit()
+    flash("Comment Removed", category="success")
     return redirect(url_for("views.comments"))
 
 @views.route('/users')
