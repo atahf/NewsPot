@@ -56,11 +56,11 @@ def creat_app():
 
     def fill_news():
         with app.app_context():
-            logger.info(f"'fill_news()' running at {datetime.now()}!")
             news, renewed = get_news(h=1, m=0, s=0)
             if renewed or len(db.session.query(News).all()) == 0:
                 News.query.delete()
                 Comment.query.delete()
+                logger.info(f"new news count is {news['result']}")
                 for n in news["data"]:
                     img = n["images"][0] if len(n["images"]) > 0 else None
                     new_n = News(title=n["title"], link=n["link"], content=n["content"], published=parse_date(n["published"]), image_url=img)
@@ -73,7 +73,7 @@ def creat_app():
         fill_news()
 
     if not scheduler.running:
-        scheduler.add_job(func=fill_news, trigger='cron', minute="*/15", second=0)
+        scheduler.add_job(func=fill_news, trigger='cron', minute="*/30", second=0)
         scheduler.start()
 
     login_manager = LoginManager()
