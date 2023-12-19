@@ -25,9 +25,8 @@
             placeholder="Enter password"
         />
         </div>
-        <a href="/passwordReset">Forgot My Password</a>
-        <div class="g-recaptcha" data-sitekey="{{ config.RECAPTCHA_SITE_KEY }}"></div>
-        <br />
-        <button type="submit" class="btn btn-primary">Login</button>
+        <a href="/passwordReset" style="margin-right: 10px;">Forgot My Password</a>
+        <div class="g-recaptcha" data-sitekey="{{ config.RECAPTCHA_SITE_KEY }}" style="margin-top: 10px;"></div>
+        <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Login</button>
     </form>
 {% endblock %}

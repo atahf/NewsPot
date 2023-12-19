@@ -23,10 +23,10 @@
         {% for c in news.comments %}
             <li class="list-group-item">
                 <div class="media">
-                    <div class="media-body">
+                    <div class="media-body" style="width: 100%;">
                         <h4 class="media-heading">{{ c.getUser() }}&nbsp;<small><i>Posted on {{ c.date }}</i></small></h4>
-                        <p class="mb-0">
-                            <span class="d-inline-block text-truncate" style="max-width: 100%;">{{ c.content }}</span>
+                        <p class="mb-0" style="overflow-wrap: break-word;">
+                            {{ c.content }}
                         </p>
                     </div>
                 </div>

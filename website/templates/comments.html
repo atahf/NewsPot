@@ -11,8 +11,8 @@
         {% for c in comments %}
             <li class="list-group-item">
                 <div class="media" style="display: flex; align-items: center;">
-                    <div class="media-body">
-                        <p>
+                    <div class="media-body" style="width: 50%; padding-right: 15px;">
+                        <p style="overflow-wrap: break-word;">
                             News ID: <a style="text-decoration: none;" href="/news/{{ c.news_id }}">{{ c.news_id }}</a>
                             <br />
                             User ID: {{ c.user_id }}
