@@ -10,7 +10,7 @@ from werkzeug.security import generate_password_hash
 
 views = Blueprint('views', __name__)
 
-@views.route('/')
+@views.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
     """
@@ -18,7 +18,16 @@ def home():
         publish datetime, as the home page
     """
     ordered_news = News.query.order_by(News.published.desc()).all()
-    return render_template("home.html", user=current_user, news=ordered_news)
+    if request.method == 'POST':
+        q = request.form.get('query').lower()
+        if q == "":
+            return render_template("home.html", user=current_user, news=ordered_news, searchQ=None, sLen=None)
+        res = []
+        for n in ordered_news:
+            if q in n.title.lower() or q in n.content.lower():
+                res.append(n)
+        return render_template("home.html", user=current_user, news=res, searchQ=q, sLen=len(res))
+    return render_template("home.html", user=current_user, news=ordered_news, searchQ=None, sLen=None)
 
 @views.route('/news/<int:news_id>', methods=['GET', 'POST'])
 @login_required
