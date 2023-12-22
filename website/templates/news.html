@@ -24,8 +24,17 @@
             <li class="list-group-item">
                 <div class="media">
                     <div class="media-body" style="width: 100%;">
-                        <h4 class="media-heading">{{ c.getUser() }}&nbsp;<small><i>Posted on {{ c.date }}</i></small></h4>
-                        <p class="mb-0" style="overflow-wrap: break-word;">
+                        <h4 class="media-heading">
+                            {{ c.getUser() }}
+                            &nbsp;
+                            <small>
+                                <i>
+                                    Posted on {{ c.date }}
+                                </i>
+                            </small>
+                        </h4>
+                        
+                        <p>
                             {{ c.content }}
                         </p>
                     </div>

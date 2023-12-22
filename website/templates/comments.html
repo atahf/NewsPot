@@ -10,8 +10,8 @@
         </li>
         {% for c in comments %}
             <li class="list-group-item">
-                <div class="media" style="display: flex; align-items: center;">
-                    <div class="media-body" style="width: 50%; padding-right: 15px;">
+                <div class="row" style="display: flex; align-items: center; justify-content: center;">
+                    <div class="col-sm-10" style="display: flex; align-items: center; justify-content: center;">
                         <p style="overflow-wrap: break-word;">
                             News ID: <a style="text-decoration: none;" href="/news/{{ c.news_id }}">{{ c.news_id }}</a>
                             <br />
@@ -19,10 +19,10 @@
                             <br />
                             Date: {{ c.date }}
                             <br />
-                            Content: {{ c.content }}
+                            Content: <b>{{ c.content }}</b>
                         </p>
                     </div>
-                    <div class="media-right">
+                    <div class="col-sm-2" style="display: flex; align-items: center; justify-content: center;">
                         <a type="button" class="btn btn-danger" href="{{ url_for('views.delete_comment', comment_id=c.id, news_id=c.news_id) }}">remove</a>
                     </div>
                 </div>

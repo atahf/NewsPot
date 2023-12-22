@@ -3,30 +3,41 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-    <form method="POST">
-        <h3 align="center">Login</h3>
-        <div class="form-group">
-        <label for="email">Email Address</label>
-        <input
-            type="email"
-            class="form-control"
-            id="email"
-            name="email"
-            placeholder="Enter email"
-        />
-        </div>
-        <div class="form-group">
-        <label for="password">Password</label>
-        <input
-            type="password"
-            class="form-control"
-            id="password"
-            name="password"
-            placeholder="Enter password"
-        />
-        </div>
-        <a href="/passwordReset" style="margin-right: 10px;">Forgot My Password</a>
-        <div class="g-recaptcha" data-sitekey="{{ config.RECAPTCHA_SITE_KEY }}" style="margin-top: 10px;"></div>
-        <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Login</button>
-    </form>
+    <div class="container" style="padding-top: 50px; width: 40%; display: flex; align-items: center; justify-content: center;">
+        <form method="POST">
+            <h3 align="center" style="margin-bottom: 25px;">Login</h3>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input
+                    type="email"
+                    class="form-control"
+                    id="email"
+                    name="email"
+                    placeholder="Enter email"
+                />
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input
+                    type="password"
+                    class="form-control"
+                    id="password"
+                    name="password"
+                    placeholder="Enter password"
+                />
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: center;">
+                <a href="/passwordReset" style="margin-right: 10px;">Forgot My Password</a>
+            </div>
+
+            <div class="g-recaptcha" data-sitekey="{{ config.RECAPTCHA_SITE_KEY }}" style="margin-top: 10px; transform: scale(0.9);"></div>
+            
+            <div style="display: flex; align-items: center; justify-content: center;">
+                <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Login</button>
+            </div>
+        </form>
+    </div>
 {% endblock %}
