@@ -203,5 +203,14 @@ def password_reset_confirm(uuid):
         
         return render_template("password_reset_confirm.html", user=current_user)
             
-        
+@views.route("/users/<int:userId>")
+@login_required
+def getUser(userId):
+    if current_user.id != userId and not current_user.role.isAdmin():
+        flash("Unathorized Access!", category="error")
+        return redirect(url_for("views.home"))
+
+    userData : User = db.session.query(User).filter(User.id == userId).first()
+    comments : Comment = db.session.query(Comment).filter(Comment.user_id == userId)
+    return render_template("user_profile.html", user=current_user, userData=userData, comments=comments)
         
