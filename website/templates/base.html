@@ -21,25 +21,25 @@
 			<div class="container-fluid">
 				<ul class="nav navbar-nav navbar-left">
 					{% if user.is_authenticated %}
+						<li>
+							<a style="color: #ffffff; border-radius: 50px;" onmouseover="this.style.backgroundColor='#4070FF'" onmouseout="this.style.backgroundColor='#3761BF'" id="home" href="/">Home</a>
+						</li>
 						{% if user.role.isAdmin() %}
 							<li>
-								<a style="color: #ffffff; border-radius: 50px;" onmouseover="this.style.backgroundColor='#4070FF'" onmouseout="this.style.backgroundColor='#3761BF'" id="home" href="/">Home</a>
+								<a style="color: #ffffff; border-radius: 50px;" onmouseover="this.style.backgroundColor='#4070FF'" onmouseout="this.style.backgroundColor='#3761BF'" id="comments" href="/comments">Comments</a>
+							</li>
+							<li>
+								<a style="color: #ffffff; border-radius: 50px;" onmouseover="this.style.backgroundColor='#4070FF'" onmouseout="this.style.backgroundColor='#3761BF'" id="users" href="/users">Users</a>
+							</li>
+							<li>
+								<a style="color: #ffffff; border-radius: 50px;" onmouseover="this.style.backgroundColor='#4070FF'" onmouseout="this.style.backgroundColor='#3761BF'" id="add-user" href="/add-user">Add User</a>
 							</li>
 						{% endif %}
-						<li>
-							<a style="color: #ffffff; border-radius: 50px;" onmouseover="this.style.backgroundColor='#4070FF'" onmouseout="this.style.backgroundColor='#3761BF'" id="comments" href="/comments">Comments</a>
-						</li>
-						<li>
-							<a style="color: #ffffff; border-radius: 50px;" onmouseover="this.style.backgroundColor='#4070FF'" onmouseout="this.style.backgroundColor='#3761BF'" id="users" href="/users">Users</a>
-						</li>
-						<li>
-							<a style="color: #ffffff; border-radius: 50px;" onmouseover="this.style.backgroundColor='#4070FF'" onmouseout="this.style.backgroundColor='#3761BF'" id="add-user" href="/add-user">Add User</a>
-						</li>
 					{% endif %}
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 					{% if user.is_authenticated %}
-						<li>
+						<li style="margin-right: 10px;">
 							<form class="navbar-form navbar-right" action="/" method="post">
 								<div class="form-group">
 									<input type="text" class="form-control" placeholder="Search" name="query" id="news-query">
@@ -64,21 +64,21 @@
 		{% with messages = get_flashed_messages(with_categories=true) %}
 			{% if messages %}
 				{% for category, message in messages %}
-					{% if category == "error" %}
-						<div class="alert alert-danger alert-dismissable fade show" role="alert">
-							{{ message }}
-							<button type="button" class="close" data-dismiss="alert">
-								<span aria-hidden="true">&times;</span>
-							</button>
+					<div style="padding-top: 53px; display: flex; justify-content: center; align-items: center; width: 100%;">
+						<div style="width: 40%;">
+							{% if category == "error" %}
+								<div class="alert alert-danger alert-dismissable fade in" role="alert">
+									<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+									{{ message }}
+								</div>
+							{% else %}
+								<div class="alert alert-success alert-dismissable fade in" role="alert">
+									<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+									{{ message }}
+								</div>
+							{% endif %}
 						</div>
-					{% else %}
-						<div class="alert alert-success alert-dismissable fade show" role="alert">
-							{{ message }}
-							<button type="button" class="close" data-dismiss="alert">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-					{% endif %}
+					</div>
 				{% endfor %}
 			{% endif %}
 		{% endwith %}
