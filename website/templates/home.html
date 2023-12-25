@@ -4,7 +4,7 @@
 
 {% block content %}
 <h1 style="display: flex; justify-content: center; align-items: center; margin: auto; padding-bottom: 15px;">
-    {% if searchQ == None %}
+    {% if not searchQ %}
         Latest News
     {% else %}
         Found {{sLen}} results for {{searchQ}}
@@ -40,4 +40,39 @@
         </li>
     {% endfor %}
 </ul>
+<div class="container" style="display: flex; justify-content: center; align-items: center;">
+    <ul class="pagination">
+        <li class="{{ "disabled" if page == 1 else "" }}"><a href="{{ url_for('views.home', page=1, query=searchQ) }}">&lt;&lt;</a></li>
+        <li class="{{ "disabled" if page < 2 else "" }}"><a href="{{ url_for('views.home', page=page-1, query=searchQ) }}">&lt;</a></li>
+
+        {% if page > 2 %}
+            <li><a href="{{ url_for('views.home', page=page-2, query=searchQ) }}">{{ page-2 }}</a></li>
+        {% else %}
+            <li class="disabled"><a>...</a></li>
+        {% endif %}
+
+        {% if page > 1 %}
+            <li><a href="{{ url_for('views.home', page=page-1, query=searchQ) }}">{{ page-1 }}</a></li>
+        {% else %}
+            <li class="disabled"><a>...</a></li>
+        {% endif %}
+
+        <li class="active"><a>{{ page }}</a></li>
+
+        {% if page+1 <= maxPage %}
+            <li><a href="{{ url_for('views.home', page=page+1, query=searchQ) }}">{{ page+1 }}</a></li>
+        {% else %}
+            <li class="disabled"><a>...</a></li>
+        {% endif %}
+
+        {% if page+2 <= maxPage %}
+            <li><a href="{{ url_for('views.home', page=page+2, query=searchQ) }}">{{ page+2 }}</a></li>
+        {% else %}
+            <li class="disabled"><a>...</a></li>
+        {% endif %}
+
+        <li class="{{ "disabled" if page+1 > maxPage else "" }}"><a href="{{ url_for('views.home', page=page+1, query=searchQ) }}">&gt;</a></li>
+        <li class="{{ "disabled" if page == maxPage else "" }}"><a href="{{ url_for('views.home', page=maxPage, query=searchQ) }}">&gt;&gt;</a></li>
+    </ul>
+</div>
 {% endblock %}

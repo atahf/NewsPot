@@ -19,20 +19,22 @@
 	<body>
 		<nav class="navbar navbar-inverse navbar-fixed-top custom-navbar">
 			<div class="container-fluid">
+				{% if user.is_authenticated %}
+					<div class="navbar-header">
+						<a class="navbar-brand" href="/" style="color: #ffffff; font-size: x-large;">UkrNews</a>
+					</div>
+				{% endif %}
 				<ul class="nav navbar-nav navbar-left">
 					{% if user.is_authenticated %}
-						<li>
-							<a style="color: #ffffff; border-radius: 50px;" onmouseover="this.style.backgroundColor='#4070FF'" onmouseout="this.style.backgroundColor='#3761BF'" id="home" href="/">Home</a>
-						</li>
 						{% if user.role.isAdmin() %}
 							<li>
-								<a style="color: #ffffff; border-radius: 50px;" onmouseover="this.style.backgroundColor='#4070FF'" onmouseout="this.style.backgroundColor='#3761BF'" id="comments" href="/comments">Comments</a>
+								<a style="color: #aaaaaa; border-radius: 50px;" onmouseover="this.style.backgroundColor='#4070FF'" onmouseout="this.style.backgroundColor='#3761BF'" id="comments" href="/comments">Comments</a>
 							</li>
 							<li>
-								<a style="color: #ffffff; border-radius: 50px;" onmouseover="this.style.backgroundColor='#4070FF'" onmouseout="this.style.backgroundColor='#3761BF'" id="users" href="/users">Users</a>
+								<a style="color: #aaaaaa; border-radius: 50px;" onmouseover="this.style.backgroundColor='#4070FF'" onmouseout="this.style.backgroundColor='#3761BF'" id="users" href="/users">Users</a>
 							</li>
 							<li>
-								<a style="color: #ffffff; border-radius: 50px;" onmouseover="this.style.backgroundColor='#4070FF'" onmouseout="this.style.backgroundColor='#3761BF'" id="add-user" href="/add-user">Add User</a>
+								<a style="color: #aaaaaa; border-radius: 50px;" onmouseover="this.style.backgroundColor='#4070FF'" onmouseout="this.style.backgroundColor='#3761BF'" id="add-user" href="/add-user">Add User</a>
 							</li>
 						{% endif %}
 					{% endif %}
@@ -40,11 +42,15 @@
 				<ul class="nav navbar-nav navbar-right">
 					{% if user.is_authenticated %}
 						<li style="margin-right: 10px;">
-							<form class="navbar-form navbar-right" action="/" method="post">
+							<form class="navbar-form navbar-right" action="/" method="get">
 								<div class="form-group">
 									<input type="text" class="form-control" placeholder="Search" name="query" id="news-query">
 								</div>
+								<button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button>
 							</form>
+						</li>
+						<li>
+							<a style="color: #ffffff; border-radius: 50px;" onmouseover="this.style.backgroundColor='#4070FF'" onmouseout="this.style.backgroundColor='#3761BF'" id="logout" href="/users/{{ current_user.id }}">My Profile</a>
 						</li>
 						<li>
 							<a style="color: #ffffff; border-radius: 50px;" onmouseover="this.style.backgroundColor='#4070FF'" onmouseout="this.style.backgroundColor='#3761BF'" id="logout" href="/logout">Logout</a>

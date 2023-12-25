@@ -10,7 +10,7 @@ from werkzeug.security import generate_password_hash
 
 views = Blueprint('views', __name__)
 
-@views.route('/', methods=['GET', 'POST'])
+@views.route('/')
 @login_required
 def home():
     """
@@ -18,16 +18,38 @@ def home():
         publish datetime, as the home page
     """
     ordered_news = News.query.order_by(News.published.desc()).all()
-    if request.method == 'POST':
-        q = request.form.get('query').lower()
-        if q == "":
-            return render_template("home.html", user=current_user, news=ordered_news, searchQ=None, sLen=None)
+
+    query = request.args.get('query')
+    page_numS = request.args.get('page')
+    
+    if query and query.strip() != "":
         res = []
         for n in ordered_news:
-            if q in n.title.lower() or q in n.content.lower():
+            if query in n.title.lower() or query in n.content.lower():
                 res.append(n)
-        return render_template("home.html", user=current_user, news=res, searchQ=q, sLen=len(res))
-    return render_template("home.html", user=current_user, news=ordered_news, searchQ=None, sLen=None)
+    else:
+        res = ordered_news
+    count = len(res)
+    maxPage = count // 10
+    if count % 10 > 0:
+        maxPage += 1
+
+    try:
+        if not page_numS:
+            page_num = 1
+        else:
+            page_num = int(page_numS)
+
+            if page_num <= 0 or page_num > maxPage:
+                raise Exception("Invalid page number!")
+    except Exception as e:
+        flash("Invalid page number!", category="error")
+        page_num = 1
+
+    idx = 10 * page_num
+    if idx > count:
+        return render_template("home.html", user=current_user, news=res[idx-10:], searchQ=query, sLen=count, page=page_num, maxPage=maxPage)
+    return render_template("home.html", user=current_user, news=res[idx-10:idx], searchQ=query, sLen=count, page=page_num, maxPage=maxPage)
 
 @views.route('/news/<int:news_id>', methods=['GET', 'POST'])
 @login_required
@@ -206,11 +228,11 @@ def password_reset_confirm(uuid):
 @views.route("/users/<int:userId>")
 @login_required
 def getUser(userId):
-    if current_user.id != userId and not current_user.role.isAdmin():
-        flash("Unathorized Access!", category="error")
-        return redirect(url_for("views.home"))
-
     userData : User = db.session.query(User).filter(User.id == userId).first()
+    if not userData:
+        flash("User does not exist!", category="error")
+        return redirect(url_for("views.home"))
+    
     comments : Comment = db.session.query(Comment).filter(Comment.user_id == userId)
-    return render_template("user_profile.html", user=current_user, userData=userData, comments=comments)
+    return render_template("user_profile.html", user=current_user, userData=userData, comments=comments, count=comments.count())
         

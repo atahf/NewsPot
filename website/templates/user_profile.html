@@ -3,45 +3,49 @@
 {% block title %}User Page{% endblock %}
 
 {% block content %}
-    <div class="jumbotron" style="margin-bottom: 50px; padding: auto;">
-        <h2 align="center">
-            {% if current_user.id == userData.id %}
-                My Information
-            {% else %}
-                User Information
-            {% endif %}
-        </h2>
-        <div class="container" style="display: flex; justify-content: center; align-items: center; font-size: large; margin-top: 35px;">
-            <div>
-                User ID: <b>{{ userData.id }}</b>
-                <br/>
-                Name <b>{{ userData.first_name.capitalize() }} {{ userData.last_name.capitalize() }}</b>
-                <br/>
-                E-mail: <b>{{ userData.email }}</b>
+    <div class="container-fluid" style="display: flex; justify-content: center; align-items: center;">
+        <div class="jumbotron" style="margin-bottom: 50px; padding: auto;">
+            <h2 align="center">
+                {% if current_user.id == userData.id %}
+                    My Information
+                {% else %}
+                    User Information
+                {% endif %}
+            </h2>
+            <div class="container" style="display: flex; justify-content: center; align-items: center; font-size: large; margin-top: 35px;">
+                <div>
+                    User ID: <b>{{ userData.id }}</b>
+                    <br/>
+                    Name <b>{{ userData.first_name.capitalize() }} {{ userData.last_name.capitalize() }}</b>
+                    <br/>
+                    E-mail: <b>{{ userData.email }}</b>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div>
-        <h3 align="center" style="margin-bottom: 35px;">
-            {% if current_user.id == userData.id %}
-                My Comments
-            {% else %}
-                Comments
-            {% endif %}
-        </h3>
-        <div class="container">
-            <div class="row">
-                {% for c in comments %}
-                    <div class="col-sm-6" style="padding: 10px; margin-bottom: 10px; text-align: justify; text-justify: inter-word;">
-                        Comment Date: <strong><i>{{ c.date }}</i></strong>
-                        <br/>
-                        Content: <strong>{{ c.content }}</strong>
-                        <br/>
-                        <a href="/news/{{c.news_id}}" style="text-decoration: none;">go to news</a>
+        {% if count > 0 %}
+            <div>
+                <h3 align="center" style="margin-bottom: 35px;">
+                    {% if current_user.id == userData.id %}
+                        My Comments
+                    {% else %}
+                        Comments
+                    {% endif %}
+                </h3>
+                <div class="container">
+                    <div class="row">
+                        {% for c in comments %}
+                            <div class="col-sm-6" style="padding: 10px; margin-bottom: 10px; text-align: justify; text-justify: inter-word;">
+                                Comment Date: <strong><i>{{ c.date }}</i></strong>
+                                <br/>
+                                Content: <strong>{{ c.content }}</strong>
+                                <br/>
+                                <a href="/news/{{c.news_id}}" style="text-decoration: none;">go to news</a>
+                            </div>
+                        {% endfor %}
                     </div>
-                {% endfor %}
+                </div>
             </div>
-        </div>
+        {% endif %}
     </div>
 {% endblock %}
