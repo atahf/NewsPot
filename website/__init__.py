@@ -18,6 +18,7 @@ scheduler = BackgroundScheduler(timezone="Europe/Istanbul")
 
 def creat_app():
     app = Flask(__name__)
+    app.config['SESSION_COOKIE_SAMESITE'] = 'Strict'
     app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
     app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{DB_NAME}"
     app.config['RECAPTCHA_SITE_KEY'] = os.environ['RECAPTCHA_SITE_KEY']
@@ -58,14 +59,19 @@ def creat_app():
         with app.app_context():
             news, renewed = get_news(h=1, m=0, s=0)
             if renewed or len(db.session.query(News).all()) == 0:
-                News.query.delete()
-                Comment.query.delete()
-                logger.info(f"new news count is {news['result']}")
+                count = 0
                 for n in news["data"]:
-                    img = n["images"][0] if len(n["images"]) > 0 else None
-                    new_n = News(title=n["title"], link=n["link"], content=n["content"], published=parse_date(n["published"]), image_url=img)
-                    db.session.add(new_n)
-                    db.session.commit()
+                    oldNews : News = db.session.query(News).filter(News.link == n["link"]).first()
+                    if not oldNews:
+                        img = n["images"][0] if len(n["images"]) > 0 else None
+                        new_n = News(title=n["title"], link=n["link"], content=n["content"], published=parse_date(n["published"]), image_url=img)
+                        db.session.add(new_n)
+                        db.session.commit()
+                        count += 1
+                if count > 0:
+                    logger.info(f"new added news count is {count}, at {datetime.now()}")
+                else:
+                    logger.info(f"no new news found, at {datetime.now()}")
     
     with app.app_context():
         db.create_all()
