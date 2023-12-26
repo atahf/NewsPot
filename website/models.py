@@ -48,6 +48,7 @@ class User(db.Model, UserMixin):
     first_name = db.Column(db.String(255), nullable=False)
     last_name = db.Column(db.String(255), nullable=False)
     role = db.Column(db.Enum(UserRole), default=UserRole.USER)
+    registration_date = db.Column(db.DateTime(timezone=True), nullable=False)
     failed_attempt = db.Column(db.Integer, default=0)
     last_failed_attempt = db.Column(db.DateTime(timezone=True), nullable=True, default=None)
     login_timeout = db.Column(db.DateTime(timezone=True), nullable=True, default=None)

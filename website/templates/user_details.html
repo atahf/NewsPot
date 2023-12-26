@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}User Details Page{% endblock %}
+
+{% block content %}
+    <div class="container" style="padding-top: 50px; display: flex; align-items: center; justify-content: center; margin: auto;">
+        <div class="jumbotron" style="margin-bottom: 50px; padding: auto;">
+            <h2 align="center">
+                {% if current_user.id == userData.id %}
+                    My Information
+                {% else %}
+                    User Information
+                {% endif %}
+            </h2>
+            <div class="container" style="display: flex; justify-content: center; align-items: center; font-size: large; margin-top: 35px;">
+                <div>
+                    User ID: <b>{{ userData.id }}</b>
+                    <br/>
+                    Name <b>{{ userData.first_name.capitalize() }} {{ userData.last_name.capitalize() }}</b>
+                    <br/>
+                    E-mail: <b>{{ userData.email }}</b>
+                    <br/>
+                    Registration Date: <b>{{ userData.registration_date }}</b>
+                    <br/>
+                    Last Faile Attempt: <b>{{ userData.last_failed_attempt }}</b>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

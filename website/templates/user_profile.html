@@ -4,34 +4,16 @@
 
 {% block content %}
     <div class="container-fluid">
-        <div class="jumbotron" style="margin-bottom: 50px; padding: auto;">
-            <h2 align="center">
-                {% if current_user.id == userData.id %}
-                    My Information
-                {% else %}
-                    User Information
-                {% endif %}
-            </h2>
-            <div class="container" style="display: flex; justify-content: center; align-items: center; font-size: large; margin-top: 35px;">
-                <div>
-                    User ID: <b>{{ userData.id }}</b>
-                    <br/>
-                    Name <b>{{ userData.first_name.capitalize() }} {{ userData.last_name.capitalize() }}</b>
-                    <br/>
-                    E-mail: <b>{{ userData.email }}</b>
-                </div>
-            </div>
+        <div class="container" style="display: grid; place-items: center;">
+            <h1 align="center">{{ userName }}</h1>
+            <a class="btn btn-info" href="/users/my-details">
+                Account Details
+            </a>
         </div>
 
-        {% if count > 0 %}
-            <div>
-                <h3 align="center" style="margin-bottom: 35px;">
-                    {% if current_user.id == userData.id %}
-                        My Comments
-                    {% else %}
-                        Comments
-                    {% endif %}
-                </h3>
+        <div class="container">
+            {% if count > 0 %}
+                <h3 align="center" style="margin-bottom: 35px;">Comments</h3>
                 <div class="container">
                     <div class="row">
                         {% for c in comments %}
@@ -45,7 +27,7 @@
                         {% endfor %}
                     </div>
                 </div>
-            </div>
-        {% endif %}
+            {% endif %}
+        </div>
     </div>
 {% endblock %}

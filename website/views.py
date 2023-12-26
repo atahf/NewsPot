@@ -233,6 +233,17 @@ def getUser(userId):
         flash("User does not exist!", category="error")
         return redirect(url_for("views.home"))
     
+    userName = userData.first_name.capitalize() + " " + userData.last_name.capitalize()
+
     comments : Comment = db.session.query(Comment).filter(Comment.user_id == userId)
-    return render_template("user_profile.html", user=current_user, userData=userData, comments=comments, count=comments.count())
+    return render_template("user_profile.html", user=current_user, userName=userName, comments=comments, count=comments.count())
         
+@views.route("/users/my-details")
+@login_required
+def getMyUserDetails():
+    userData : User = db.session.query(User).filter(User.id == current_user.id).first()
+    if not userData:
+        flash("User does not exist!", category="error")
+        return redirect(url_for("views.home"))
+    
+    return render_template("user_details.html", user=current_user, userData=userData)

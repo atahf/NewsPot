@@ -35,6 +35,7 @@ def login():
                     login_user(user, remember=True)
                     return redirect(url_for('views.home'))
                 else:
+                    user.last_failed_attempt = datetime.now()
                     user.failed_attempt += 1
                     if user.failed_attempt >= MAX_ATTEMPTS:
                         timeout_duration = TIMEOUT_DURATION * (INCREMENT_FACTOR ** (user.failed_attempt - MAX_ATTEMPTS))
@@ -86,7 +87,8 @@ def sign_up():
             new_user = User(
                 email=email,
                 first_name=firstName, 
-                last_name=lastName, 
+                last_name=lastName,
+                registration_date=datetime.now(),
                 password=generate_password_hash(password1, method="pbkdf2:sha256", salt_length=16)
             )
             db.session.add(new_user)
