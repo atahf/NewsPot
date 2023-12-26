@@ -236,7 +236,7 @@ def getUser(userId):
     userName = userData.first_name.capitalize() + " " + userData.last_name.capitalize()
 
     comments : Comment = db.session.query(Comment).filter(Comment.user_id == userId)
-    return render_template("user_profile.html", user=current_user, userName=userName, comments=comments, count=comments.count())
+    return render_template("user_profile.html", user=current_user, userId=userId, userName=userName, comments=comments, count=comments.count())
         
 @views.route("/users/<int:userId>/my-details")
 @login_required
