@@ -6,23 +6,25 @@
     <div class="container-fluid">
         <div class="container" style="display: grid; place-items: center;">
             <h1 align="center">{{ userName }}</h1>
-            <a class="btn btn-info" href="/users/my-details">
+            <a class="btn btn-info" href="/users/my-details" style="margin-top: 50px;">
                 Account Details
             </a>
         </div>
 
         <div class="container">
             {% if count > 0 %}
-                <h3 align="center" style="margin-bottom: 35px;">Comments</h3>
+                <h3 align="center" style="margin-bottom: 35px; margin-top: 50px;">My Comments</h3>
                 <div class="container">
                     <div class="row">
                         {% for c in comments %}
                             <div class="col-sm-6" style="padding: 10px; margin-bottom: 10px; text-align: justify; text-justify: inter-word;">
-                                Comment Date: <strong><i>{{ c.date }}</i></strong>
+                                Title: <strong>{{ c.getNews().title }}</strong>
                                 <br/>
-                                Content: <strong>{{ c.content }}</strong>
+                                Comment: <strong>{{ c.content }}</strong>
                                 <br/>
-                                <a href="/news/{{c.news_id}}" style="text-decoration: none;">go to news</a>
+                                Date   : <strong><i>{{ c.getDatePrintable() }}</i></strong>
+                                <br/>
+                                <a href="/news/{{c.news_id}}" style="text-decoration: none;">Revisit</a>
                             </div>
                         {% endfor %}
                     </div>

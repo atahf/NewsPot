@@ -23,6 +23,24 @@ class News(db.Model):
     published = db.Column(db.DateTime(timezone=True), default=func.now())
     image_url = db.Column(db.String(1023), nullable=True)
     comments = db.relationship('Comment')
+    
+    def getDatePrintable(self):
+        date_elements = str(self.published).split(" ")[0].split("-")
+        time_elements = str(self.published).split(" ")[1][:5]
+        month = "January"
+        if date_elements[1] == "1": month = "January"
+        if date_elements[1] == "2": month = "February"
+        if date_elements[1] == "3": month = "March"
+        if date_elements[1] == "4": month = "April"
+        if date_elements[1] == "5": month = "May"
+        if date_elements[1] == "6": month = "June"
+        if date_elements[1] == "7": month = "July"
+        if date_elements[1] == "8": month = "August"
+        if date_elements[1] == "9": month = "September"
+        if date_elements[1] == "10": month = "October"
+        if date_elements[1] == "11": month = "November"
+        if date_elements[1] == "12": month = "December"
+        return f"{date_elements[2]} {month} {date_elements[0]},  {time_elements}"
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -33,6 +51,27 @@ class Comment(db.Model):
 
     def getUser(self):
         return User.query.filter_by(id=self.user_id).first()
+    
+    def getNews(self):
+        return News.query.filter_by(id=self.news_id).first()
+    
+    def getDatePrintable(self):
+        date_elements = str(self.date).split(" ")[0].split("-")
+        time_elements = str(self.date).split(" ")[1][:5]
+        month = "January"
+        if date_elements[1] == "1": month = "January"
+        if date_elements[1] == "2": month = "February"
+        if date_elements[1] == "3": month = "March"
+        if date_elements[1] == "4": month = "April"
+        if date_elements[1] == "5": month = "May"
+        if date_elements[1] == "6": month = "June"
+        if date_elements[1] == "7": month = "July"
+        if date_elements[1] == "8": month = "August"
+        if date_elements[1] == "9": month = "September"
+        if date_elements[1] == "10": month = "October"
+        if date_elements[1] == "11": month = "November"
+        if date_elements[1] == "12": month = "December"
+        return f"{date_elements[2]} {month} {date_elements[0]},  {time_elements}"
 
 class UserRole(Enum):
     USER = "user"
@@ -54,6 +93,24 @@ class User(db.Model, UserMixin):
     login_timeout = db.Column(db.DateTime(timezone=True), nullable=True, default=None)
     comments = db.relationship('Comment')
     reset_tokens = db.relationship('PasswordResetToken')
+    
+    def getDatePrintable(self, date):
+        date_elements = str(date).split(" ")[0].split("-")
+        time_elements = str(date).split(" ")[1][:5]
+        month = "January"
+        if date_elements[1] == "1": month = "January"
+        if date_elements[1] == "2": month = "February"
+        if date_elements[1] == "3": month = "March"
+        if date_elements[1] == "4": month = "April"
+        if date_elements[1] == "5": month = "May"
+        if date_elements[1] == "6": month = "June"
+        if date_elements[1] == "7": month = "July"
+        if date_elements[1] == "8": month = "August"
+        if date_elements[1] == "9": month = "September"
+        if date_elements[1] == "10": month = "October"
+        if date_elements[1] == "11": month = "November"
+        if date_elements[1] == "12": month = "December"
+        return f"{date_elements[2]} {month} {date_elements[0]},  {time_elements}"
 
     def __str__(self):
         return f"{self.first_name[0].upper()}{'*' * (len(self.first_name)-1)} {self.last_name[0].upper()}{'*' * (len(self.last_name)-1)}"

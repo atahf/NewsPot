@@ -20,9 +20,9 @@
                     <br/>
                     E-mail: <b>{{ userData.email }}</b>
                     <br/>
-                    Registration Date: <b>{{ userData.registration_date }}</b>
+                    Registration Date: <b>{{ userData.getDatePrintable(userData.registration_date) }}</b>
                     <br/>
-                    Last Faile Attempt: <b>{{ userData.last_failed_attempt }}</b>
+                    Last Failed Attempt: <b>{{ userData.last_failed_attempt }}</b>
                 </div>
             </div>
         </div>

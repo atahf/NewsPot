@@ -5,7 +5,7 @@
 {% block content %}
 <div style="text-align: justify; text-justify: inter-word; width: 75%; margin-left: 12.5%;">
     <h1 align=""center> {{ news.title }} </h1>
-    <i>Published at {{ news.published }}</i>
+    <i>Published at {{ news.getDatePrintable() }}</i>
     <br>
     <div style="display: flex; justify-content: center; align-items: center;">
         {% if news.image_url %}
@@ -29,7 +29,7 @@
                             &nbsp;
                             <small>
                                 <i>
-                                    Posted on {{ c.date }}
+                                    Posted on {{ c.getDatePrintable() }}
                                 </i>
                             </small>
                         </h4>
