@@ -236,12 +236,16 @@ def getUser(userId):
     userName = userData.first_name.capitalize() + " " + userData.last_name.capitalize()
 
     comments : Comment = db.session.query(Comment).filter(Comment.user_id == userId)
-    return render_template("user_profile.html", user=current_user, userName=userName, comments=comments, count=comments.count())
+    return render_template("user_profile.html", user=current_user, userId=userId, userName=userName, comments=comments, count=comments.count())
         
-@views.route("/users/my-details")
+@views.route("/users/<int:userId>/my-details")
 @login_required
-def getMyUserDetails():
-    userData : User = db.session.query(User).filter(User.id == current_user.id).first()
+def getMyUserDetails(userId):
+    if userId != current_user.id:
+        flash("Unathorized Access!", category="error")
+        return redirect(url_for("views.home"))
+
+    userData : User = db.session.query(User).filter(User.id == userId).first()
     if not userData:
         flash("User does not exist!", category="error")
         return redirect(url_for("views.home"))

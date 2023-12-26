@@ -132,6 +132,7 @@ def admin_add_user():
                 email=email,
                 first_name=firstName, 
                 last_name=lastName, 
+                registration_date=datetime.now(),
                 password=generate_password_hash(password1, method="pbkdf2:sha256", salt_length=8),
                 role=userRole
             )
