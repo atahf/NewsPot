@@ -19,11 +19,9 @@
 	<body>
 		<nav class="navbar navbar-inverse navbar-fixed-top custom-navbar">
 			<div class="container-fluid">
-				{% if user.is_authenticated %}
-					<div class="navbar-header">
-						<a class="navbar-brand" href="/" style="color: #ffffff; font-size: x-large;">UkrNews</a>
-					</div>
-				{% endif %}
+				<div class="navbar-header">
+					<a class="navbar-brand" href="/" style="color: #ffffff; font-size: x-large;">UkrNews</a>
+				</div>
 				<ul class="nav navbar-nav navbar-left">
 					{% if user.is_authenticated %}
 						{% if user.role.isAdmin() %}

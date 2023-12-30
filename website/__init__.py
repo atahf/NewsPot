@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 from flask_sqlalchemy import SQLAlchemy
 from os import path
 from flask_login import LoginManager
@@ -89,6 +89,10 @@ def creat_app():
     @login_manager.user_loader
     def load_user(id):
         return User.query.get(int(id))
+
+    @app.errorhandler(404)
+    def page_not_found(error):
+        return render_template('404.html'), 404
 
     idor_ips = {}
 
