@@ -155,7 +155,6 @@ def password_reset():
     
     return render_template("password_reset.html", user=current_user)
     
-    
 @views.route("passwordReset/<string:uuid>", methods=["GET", "POST"])
 def password_reset_confirm(uuid):
     instance : PasswordResetToken = db.session.query(PasswordResetToken).filter(PasswordResetToken.uuid == str(uuid)).first()

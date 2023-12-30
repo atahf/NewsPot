@@ -12,7 +12,7 @@
             <li class="list-group-item">
                 <div class="media" style="display: flex; align-items: center;">
                     <div class="media-body">
-                        <a href="/users/{{ u.id }}" style="text-decoration: none; color: #000000;">
+                        <div style="text-decoration: none; color: #000000;">
                             <p>
                                 User ID: {{ u.id }}
                                 <br />
@@ -22,7 +22,7 @@
                                 <br />
                                 User Role: {{ u.role.value }}
                             </p>
-                        </a>
+                        </div>
                     </div>
                     <div class="media-right">
                         <a type="button" class="btn btn-danger" href="{{ url_for('auth.admin_remove_user', id=u.id) }}">remove</a>
