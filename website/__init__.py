@@ -92,12 +92,21 @@ def creat_app():
 
     @app.after_request
     def after_request(response):
-        client_ip = request.remote_addr
-        request_url = request.url
-        request_method = request.method
-        request_params = request.args if request.method == 'GET' else request.form
+        classification = "safe"
+        URL = request.url
+        body = dict(request.args)
 
-        log_message = f'Client IP: {client_ip}, URL: {request_url}, Method: {request_method}, Parameters: {request_params}'
+        if "/users/" in URL:
+            parts = URL[URL.find("/users/")+7:].split('/')
+            if len(parts) == 1:
+                classification = "A4: Insecure direct object references (IDOR)"
+        elif "/admins/comments" in URL:
+            classification = "A8: Failure to Restrict URL Access"
+        elif "/redirect?url=" in URL:
+            if db.session.query(News).filter(News.link == body['url']).count() == 0:
+                classification = "A10: Unvalidated Redirects and Forwards"
+
+        log_message = f'User IP: {request.remote_addr}, URL: {URL}, Method: {request.method}, Parameters: {body}, Classification: {classification}'
         logger.info(log_message)
 
         return response
