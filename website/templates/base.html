@@ -28,13 +28,13 @@
 					{% if user.is_authenticated %}
 						{% if user.role.isAdmin() %}
 							<li>
-								<a style="color: #aaaaaa; border-radius: 50px;" onmouseover="this.style.backgroundColor='#4070FF'" onmouseout="this.style.backgroundColor='#3761BF'" id="comments" href="/comments">Comments</a>
+								<a style="color: #aaaaaa; border-radius: 50px;" onmouseover="this.style.backgroundColor='#4070FF'" onmouseout="this.style.backgroundColor='#3761BF'" id="comments" href="/admins/comments">Comments</a>
 							</li>
 							<li>
-								<a style="color: #aaaaaa; border-radius: 50px;" onmouseover="this.style.backgroundColor='#4070FF'" onmouseout="this.style.backgroundColor='#3761BF'" id="users" href="/users">Users</a>
+								<a style="color: #aaaaaa; border-radius: 50px;" onmouseover="this.style.backgroundColor='#4070FF'" onmouseout="this.style.backgroundColor='#3761BF'" id="users" href="/admins/users">Users</a>
 							</li>
 							<li>
-								<a style="color: #aaaaaa; border-radius: 50px;" onmouseover="this.style.backgroundColor='#4070FF'" onmouseout="this.style.backgroundColor='#3761BF'" id="add-user" href="/add-user">Add User</a>
+								<a style="color: #aaaaaa; border-radius: 50px;" onmouseover="this.style.backgroundColor='#4070FF'" onmouseout="this.style.backgroundColor='#3761BF'" id="add-user" href="/admins/add-user">Add User</a>
 							</li>
 						{% endif %}
 					{% endif %}

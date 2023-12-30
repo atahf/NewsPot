@@ -93,7 +93,7 @@ def delete_comment(news_id, comment_id):
     flash("Comment Removed", category="success")
     return redirect(url_for("views.comments"))
 
-@views.route('/users')
+@views.route('/admins/users')
 @login_required
 def users():
     """
@@ -104,14 +104,14 @@ def users():
         return render_template("users.html", user=current_user, users=User.query.all())
     return redirect(url_for('views.home'))
 
-@views.route('/add-user')
+@views.route('/admins/add-user')
 @login_required
 def add_user():
     if current_user.role.isAdmin():
         return render_template("add_user.html", user=current_user, users=User.query.all())
     return redirect(url_for('views.home'))
 
-@views.route('/comments')
+@views.route('/admins/comments')
 @login_required
 def comments():
     """
@@ -153,8 +153,7 @@ def password_reset():
         flash("Instructions are sent to your email!", category="info")
         return redirect(url_for('auth.login'))
     
-    else:
-        return render_template("password_reset.html", user=current_user)
+    return render_template("password_reset.html", user=current_user)
     
     
 @views.route("passwordReset/<string:uuid>", methods=["GET", "POST"])
@@ -199,31 +198,8 @@ def password_reset_confirm(uuid):
         db.session.commit()
         flash("Password change succeed!", category="info")
         return redirect(url_for('auth.login'))
-    
-    else:
         
-        if not instance:
-            flash("Token could not be found!", category="error")
-            return redirect(url_for('auth.login'))
-        
-        if instance.is_confirmed:
-            flash("This token already issued!", category="error")
-            return redirect(url_for('auth.login'))
-        
-        if instance.expiry_date < datetime.utcnow():
-            flash("This token is expired!", category="error")
-            return redirect(url_for('auth.login'))
-        
-        if instance.remaining_rights <= 0:
-            flash("No rights left!", category="error")
-            return redirect(url_for('auth.login'))
-        
-        user = instance.getUser()
-        if not user:
-            flash("The user could not be found!")
-            return redirect(url_for('auth.login'))
-        
-        return render_template("password_reset_confirm.html", user=current_user)
+    return render_template("password_reset_confirm.html", user=current_user)
             
 @views.route("/users/<int:userId>")
 @login_required
