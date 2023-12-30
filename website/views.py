@@ -160,8 +160,6 @@ def password_reset():
 def password_reset_confirm(uuid):
     instance : PasswordResetToken = db.session.query(PasswordResetToken).filter(PasswordResetToken.uuid == str(uuid)).first()
     if request.method == "POST":
-        url = request.args.get('url')
-        
         if not instance:
             flash("Token could not be found!", category="error")
             return redirect(url_for('auth.login'))
@@ -187,11 +185,11 @@ def password_reset_confirm(uuid):
             instance.remaining_rights -= 1
             db.session.commit()
             flash("The 6 digit code is incorrect", category="error")
-            return redirect(url)
+            return redirect(request.url)
         
         if str(request.form.get("new_password")) != str(request.form.get("new_password_again")):
             flash("The passwords are not matching!", category="error")
-            return redirect(url)
+            return redirect(request.url)
             
         instance.is_confirmed = True
         user.password = generate_password_hash(str(request.form.get("new_password")), method="pbkdf2:sha256", salt_length=16)
