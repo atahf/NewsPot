@@ -21,7 +21,7 @@ def crawl(rss_url, crawled_news):
         try:
             imgs = []
             for elem in entry.links:
-                if "image" in elem.type:
+                if "image" in elem.type and "www" in elem.href:
                     imgs.append(elem.href)
             if rss_url == rss_urls[0] and entry.link:
                 response = requests.get(entry.link)

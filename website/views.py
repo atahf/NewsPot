@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, send_file
 from flask_login import login_required, current_user
 from . import db
 from .models import User, News, Comment, PasswordResetToken
@@ -126,7 +126,10 @@ def redirect_user():
         or 'CWE-601: Open Redirects' vulnerability
     """
     url = request.args.get('url')
-    return redirect(url, code=302) if url else 'No URL provided.'
+    if url.startswith('http://') or url.startswith('https://'):
+        return redirect(url)
+    else:
+        return send_file(url, as_attachment=False)
 
 
 @views.route("/passwordReset", methods=['GET', 'POST'])
