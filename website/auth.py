@@ -89,7 +89,7 @@ def sign_up():
                 first_name=firstName, 
                 last_name=lastName,
                 registration_date=datetime.now(),
-                password=generate_password_hash(password1, method="pbkdf2:sha256", salt_length=16)
+                password=generate_password_hash(password1, method="scrypt", salt_length=16)
             )
             db.session.add(new_user)
             db.session.commit()
@@ -133,7 +133,7 @@ def admin_add_user():
                 first_name=firstName, 
                 last_name=lastName, 
                 registration_date=datetime.now(),
-                password=generate_password_hash(password1, method="pbkdf2:sha256", salt_length=8),
+                password=generate_password_hash(password1, method="scrypt", salt_length=8),
                 role=userRole
             )
             db.session.add(new_user)
