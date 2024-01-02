@@ -1,7 +1,7 @@
 from flask import Flask, request, render_template
 from flask_sqlalchemy import SQLAlchemy
 from os import path
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 from flask_recaptcha import ReCaptcha
 from apscheduler.schedulers.background import BackgroundScheduler
 import logging
@@ -92,9 +92,7 @@ def creat_app():
 
     @app.errorhandler(404)
     def page_not_found(error):
-        return render_template('404.html'), 404
-
-    idor_ips = {}
+        return render_template('404.html', user=current_user), 404
 
     @app.after_request
     def after_request(response):
@@ -104,14 +102,14 @@ def creat_app():
         body = dict(request.args)
 
         if "/users/" in URL:
-            parts = URL[URL.find("/users/")+7:].split('/')
-            if len(parts) == 1:
-                if len(idor_ips.get(ip_address, set())) == 0:
-                    idor_ips[ip_address] = set([parts[0]])
-                else:
-                    idor_ips[ip_address].add(parts[0])
-                    if len(idor_ips[ip_address]) > 1:
+            idx0 = URL.find("/users/")+7
+            idx1 = URL.find("/", idx0)
+            if idx1 == -1:
+                try:
+                    if int(URL[idx0:]) != current_user.id:
                         classification = "A4: Insecure direct object references (IDOR)"
+                except Exception as e:
+                    classification = "A4: Insecure direct object references (IDOR)"
         elif "/admins/comments" in URL:
             classification = "A8: Failure to Restrict URL Access"
         elif "/redirect?url=" in URL:
