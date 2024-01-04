@@ -143,10 +143,6 @@ def password_reset():
             flash("There is no such account!", category="error")
             return redirect(url_for('auth.login'))
         
-        instances = db.session.query(PasswordResetToken).filter(PasswordResetToken.user_id == user.id, PasswordResetToken.created_at > datetime.utcnow() - timedelta(hours=1) ).all()
-        if len(instances) > 0:
-            flash("Yo can only try to reset your password once a hour!", category="error")
-            return redirect(url_for('auth.login'))
         
         new_token = PasswordResetToken(user_id = user.id, uuid = str(uuid.uuid4()), is_confirmed = False, six_digit = str(random.randint(100000,999999)))
         send_mail(recipient=user.email, uuid=new_token.uuid, name=user.first_name, six_digit=new_token.six_digit)
