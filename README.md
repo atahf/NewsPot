@@ -20,4 +20,4 @@ APP_URL={YOUR_DEPLOY_IP_PORT}
 ```
 python main.py
 ```
-By default application will run on port 8080, but you can change it inside [```main.py```](https://github.com/atahf/NewsPot/blob/main/main.py).
+- With current configuration, the application will run on ```YOUR_IP:8080```, but you can change it inside [```main.py```](https://github.com/atahf/NewsPot/blob/main/main.py).
